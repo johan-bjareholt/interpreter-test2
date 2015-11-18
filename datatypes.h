@@ -1,3 +1,6 @@
+#ifndef DATATYPES_H
+#define DATATYPES_H
+
 enum DataTypes {
     TYPE_NONE,
     TYPE_VAR,
@@ -11,15 +14,6 @@ enum DataTypes {
     TYPE_COMPARISON,
 };
 
-const char* DataTypeNames[] = {
-    "None",
-    "Var",
-    "Int",
-    "+",
-    "-",
-    "/",
-    "*",
-    "%",
-    "=",
-    "==",
-};
+extern char* DataTypeNames[];
+
+#endif

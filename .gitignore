@@ -1,3 +1,6 @@
+# Binaries
+interpreter
+
 # Object files
 *.o
 *.ko

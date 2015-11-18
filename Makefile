@@ -1,7 +1,7 @@
 
-NAME=compiler
+NAME=interpreter
 
-SRC=main.c
+SRC=main.c parser.c datatypes.c eval.c input.c
 
 CFLAGS += --std=c99 -Wall -g
 
