@@ -25,6 +25,9 @@ void eval(struct Section* section){
                     break;
                 case TYPE_MINUS:
                 case TYPE_PLUS:
+                case TYPE_DIVISION:
+                case TYPE_MULTIPLICATION:
+                case TYPE_MODULO:
                     if (section->prev == NULL){
                         printf("%s has nothing prior to it to calculate\n", section->string);
                         status = EStatus_Error;
@@ -47,20 +50,32 @@ void eval(struct Section* section){
                             int prevVal = atoi(section->prev->string);
                             int nextVal = atoi(section->next->string);
                             int val=0;
-                            if (section->datatype == TYPE_PLUS)
-                                val = prevVal + nextVal;
-                            else if (section->datatype == TYPE_MINUS)
-                                val = prevVal - nextVal;
-                            else if (section->datatype == TYPE_DIVISION)
-                                val = prevVal / nextVal;
-                            else if (section->datatype == TYPE_MODULO)
-                                val = prevVal % nextVal;
-                            else { // This isn't supposed to happen
-                                printf("Something went incredibly wrong with the evaluation of arithmetic\n");
-                                status = EStatus_Error;
+                            switch (section->datatype){
+                                case TYPE_PLUS:
+                                    val = prevVal + nextVal;
+                                    break;
+                                case TYPE_MINUS:
+                                    val = prevVal - nextVal;
+                                    break;
+                                case TYPE_MULTIPLICATION:
+                                    val = prevVal * nextVal;
+                                    break;
+                                case TYPE_DIVISION:
+                                    val = prevVal / nextVal;
+                                    break;
+                                case TYPE_MODULO:
+                                    val = prevVal % nextVal;
+                                    break;
+                                default:
+                                    printf("Something went incredibly wrong with the evaluation of arithmetic\n");
+                                    status = EStatus_Error;
+                                    break;
                             }
-                            printf("%s%s%s=%d\n", section->prev->string, DataTypeNames[section->datatype],section->next->string, val);
-                            //create_section()
+                            printf("%s%s%s=%d\n",
+                                section->prev->string,              // val
+                                DataTypeNames[section->datatype],   // operand
+                                section->next->string,              // val
+                                val);                               // result
                         }
                     }
                     break;

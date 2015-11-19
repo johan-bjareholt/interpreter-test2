@@ -66,6 +66,9 @@ void* parser(char* string){
                 case '-': // -
                     datatype = TYPE_MINUS;
                     break;
+                case '*':
+                    datatype = TYPE_MULTIPLICATION;
+                    break;
                 case '/': // /
                     datatype = TYPE_DIVISION;
                     break;
