@@ -2,6 +2,7 @@
 #include <stdlib.h>
 
 #include "eval.h"
+#include "variables.h"
 #include "datatypes.h"
 #include "parser.h"
 
@@ -93,7 +94,7 @@ void eval(struct Section* section){
                             printf("%s is not a variable and can therefore not be assigned\n", section->string);
                             status = EStatus_Error;
                         }
-                        else if (section->next->datatype != TYPE_INT ||
+                        else if (section->next->datatype != TYPE_INT &&
                                  section->next->datatype != TYPE_VAR){
                             printf("%s is of type %s and cannot be assigned to %s of type %s\n",
                                     section->prev->string, DataTypeNames[section->prev->datatype],
@@ -103,6 +104,18 @@ void eval(struct Section* section){
                         else {
                             printf("Assigning %s to %s\n",
                                 section->next->string, section->prev->string);
+                            create_variable_int(section->prev->string, section->next->datatype, atoi(section->next->string));
+                            struct Variable* var = get_variable(section->prev->string);
+                            if (var != NULL){
+                                if (var->datatype == TYPE_INT){
+                                    printf("Variable %s was assigned to %d\n",
+                                        var->name, *(int*)var->value);
+                                }
+                            }
+                            else {
+                                printf("This shouldn't be happening. Variable %s was created, but couldn't be accessed\n",
+                                section->prev->string);
+                            }
                         }
                     }
                     break;

@@ -3,14 +3,9 @@
 #include <string.h>
 
 #include "datatypes.h"
+#include "variables.h"
 
 #define TABLESIZE 100
-
-struct Variable {
-    char* name;
-    int datatype;
-    void* value;
-};
 
 struct Node {
     struct Variable* variable;
@@ -18,6 +13,29 @@ struct Node {
 };
 
 struct Node* table[TABLESIZE];
+
+struct Variable* create_variable_empty(const char* name, int datatype){
+    struct Variable* var = malloc(sizeof(struct Variable));
+
+    int len = strlen(name);
+    var->name = malloc(len*sizeof(char));
+    strcpy(var->name, name);
+
+    var->datatype = datatype;
+
+    var->value = NULL;
+
+    add_variable(var);
+
+    return var;
+}
+
+struct Variable* create_variable_int(const char* name, int datatype, int value){
+    struct Variable* var = create_variable_empty(name, datatype);
+    var->value = malloc(sizeof(int));
+    memcpy(var->value, &value, sizeof(int));
+    return var;
+}
 
 int generate_hash(const char* string){
     // Count name len
