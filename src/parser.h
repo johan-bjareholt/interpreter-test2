@@ -11,6 +11,7 @@ struct Section {
 };
 
 void* create_section(const int datatype, const char* string);
+void free_section(struct Section* section);
 
 void* parser(char* string);
 

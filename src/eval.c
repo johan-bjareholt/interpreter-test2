@@ -62,6 +62,10 @@ void eval(struct Section* section){
                                     val = prevVal * nextVal;
                                     break;
                                 case TYPE_DIVISION:
+                                    if (nextVal == 0){
+                                        printf("Division by zero\n");
+                                        return;
+                                    }
                                     val = prevVal / nextVal;
                                     break;
                                 case TYPE_MODULO:
@@ -77,6 +81,26 @@ void eval(struct Section* section){
                                 DataTypeNames[section->datatype],   // operand
                                 section->next->string,              // val
                                 val);                               // result
+
+                            const int MAXLEN = 20;
+                            char valstr[MAXLEN];
+                            snprintf(valstr, MAXLEN, "%d", val);
+                            struct Section* newsec = create_section(TYPE_INT, valstr);
+
+                            if (section->next->next){
+                                section->next->next->prev = newsec;
+                                newsec->next = section->next->next;
+                            }
+                            if (section->prev->prev){
+                                section->prev->prev->next = newsec;
+                                newsec->prev = section->prev->prev;
+                            }
+
+                            free_section(section->next);
+                            free_section(section->prev);
+                            free_section(section);
+
+                            section = newsec;
                         }
                     }
                     break;

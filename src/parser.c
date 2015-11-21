@@ -21,6 +21,11 @@ void* create_section(const int datatype, const char* string){
     return section;
 }
 
+void free_section(struct Section* section){
+    free(section->string);
+    free(section);
+}
+
 void* parser(char* string){
     printf("# Parsing...\n");
 
