@@ -38,19 +38,64 @@ void eval(struct Section* section){
                         status = EStatus_Error;
                     }
                     else {
-                        if (section->prev->datatype != TYPE_INT){
+                        if (section->prev->datatype != TYPE_INT && section->prev->datatype != TYPE_VAR){
                             printf("%s cannot calculate %s of the type %s\n", section->string, section->prev->string, DataTypeNames[section->prev->datatype]);
                             status = EStatus_Error;
                         }
 
-                        else if (section->next->datatype != TYPE_INT){
+                        else if (section->next->datatype != TYPE_INT && section->next->datatype != TYPE_VAR){
                             printf("%s cannot calculate %s of the type %s\n", section->string, section->next->string, DataTypeNames[section->next->datatype]);
                             status = EStatus_Error;
                         }
                         else {
-                            int prevVal = atoi(section->prev->string);
-                            int nextVal = atoi(section->next->string);
-                            int val=0;
+                            int prevVal, nextVal;
+                            int val = 0;
+
+                            //int prevVal = atoi(section->prev->string);
+                            //int nextVal = atoi(section->next->string);
+
+                            struct Variable* varptr;
+                            switch (section->prev->datatype){
+                                case TYPE_INT:
+                                    prevVal = atoi(section->prev->string);
+                                    break;
+                                case TYPE_VAR:
+                                    varptr = get_variable(section->prev->string);
+                                    if (varptr != NULL){
+                                        if (varptr->datatype == TYPE_INT){
+                                            prevVal = *(int*)varptr->value;
+                                        }
+                                        else {
+                                            printf("Variable %s isn't defined\n", varptr->name);
+                                            return;
+                                        }
+                                    }
+                                    break;
+                                default:
+                                    printf("This really shouldn't be happening. Arithmetic expression type check didn't catch incorrect type\n");
+                                    break;
+                            }
+                            switch (section->next->datatype){
+                                case TYPE_INT:
+                                    nextVal = atoi(section->next->string);
+                                    break;
+                                case TYPE_VAR:
+                                    varptr = get_variable(section->next->string);
+                                    if (varptr != NULL){
+                                        if (varptr->datatype == TYPE_INT){
+                                            nextVal = *(int*)varptr->value;
+                                        }
+                                        else {
+                                            printf("Variable %s isn't defined\n", varptr->name);
+                                            return;
+                                        }
+                                    }
+                                    break;
+                                default:
+                                    printf("This really shouldn't be happening. Arithmetic expression type check didn't catch incorrect type\n");
+                                    break;
+                            }
+
                             switch (section->datatype){
                                 case TYPE_PLUS:
                                     val = prevVal + nextVal;
