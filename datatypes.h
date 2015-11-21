@@ -4,7 +4,9 @@
 enum DataTypes {
     TYPE_NONE,
     TYPE_VAR,
+    TYPE_FUNC,
     TYPE_INT,
+    TYPE_STR,
     TYPE_PLUS,
     TYPE_MINUS,
     TYPE_MULTIPLICATION,

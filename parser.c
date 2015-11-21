@@ -1,6 +1,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <stdbool.h>
 #include <string.h>
 
 #include "datatypes.h"
@@ -33,8 +34,32 @@ void* parser(char* string){
     int datatype_endi = 0;
     int prev_datatype;
     for (int i=0; i<=len; i++){
+        datatype_endi = i-1;
+        // Types with escape chars
+        if (datatype == TYPE_STR){
+            while ( string[i] != '"' && i < len)
+                i++;
+            if (string[i] != '"'){
+                printf("No end \" for string! Exiting\n");
+                exit(-1);
+            }
+            datatype = TYPE_NONE;
+            datatype_starti++;
+            datatype_endi = i-1;
+        }
+        else if (datatype == TYPE_FUNC){
+            datatype = TYPE_NONE;
+            while ( string[i] != ')' && i < len)
+                i++;
+            if (string[i] != ')'){
+                printf("No end ) for function! Exiting\n");
+                exit(-1);
+            }
+            datatype_endi = i;
+        }
+        // Alphanumerics
         // A-Z
-        if (string[i] >= 'A' && string[i] <= 'Z'){
+        else if (string[i] >= 'A' && string[i] <= 'Z'){
             datatype = TYPE_VAR;
         }
         // a-z
@@ -46,11 +71,31 @@ void* parser(char* string){
             if (prev_datatype != TYPE_VAR)
                 datatype = TYPE_INT;
         }
+        // Symbols
         else {
             switch (string[i]) {
                 case ' ': // blank
                 case '\0': // end of string
-                case '\n':
+                case '\n': // newline
+                    datatype = TYPE_NONE;
+                    break;
+                case '"':
+                    // Start of string
+                    if (datatype != TYPE_STR)
+                        datatype = TYPE_STR;
+                    // End of string
+                    else
+                        datatype = TYPE_NONE;
+                    break;
+                case '(': // Function start
+                    if (prev_datatype != TYPE_VAR){
+                        printf("Error, function expected but there is no function mentioned to execute, exiting\n");
+                        exit(-1);
+                    }
+                    prev_datatype = TYPE_FUNC;
+                    datatype = TYPE_FUNC;
+                    break;
+                case ')': // Function end
                     datatype = TYPE_NONE;
                     break;
                 case '=': // Assign
@@ -81,7 +126,6 @@ void* parser(char* string){
             }
         }
         if (datatype != prev_datatype){
-            datatype_endi = i-1;
             if (datatype_endi >= 0){
                 if (prev_datatype != TYPE_NONE){
                     printf("%s ", DataTypeNames[prev_datatype]);
