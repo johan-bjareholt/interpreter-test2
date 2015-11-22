@@ -1,21 +1,49 @@
+#define _GNU_SOURCE // Adds getline
 #include <stdio.h>
+#include <stdbool.h>
 #include <string.h>
 
 #include "input.h"
 
-void getline(char* line){
-    int len;
+bool interactive;
+FILE* fp;
 
-    getlinestart:
+void input_set_interactive(){
+    interactive = true;
+    fp = stdin;
+}
 
-    printf("> ");
-    fgets(line, 100, stdin);
-
-    len = strlen(line);
-    if (len == 0)
-        goto getlinestart;
-    if (len >= 100){
-        printf("Line is too long\n");
-        goto getlinestart;
+bool input_set_file(const char* filename){
+    interactive = false;
+    printf("Opening file %s\n", filename);
+    fp = fopen(filename, "r");
+    if (fp == NULL){
+        printf("Couldn't open file %s\n", filename);
+        return false;
     }
+    return true;
+}
+
+void input_close(){
+    if (interactive == false)
+        fclose(fp);
+}
+
+char* input_getline(){
+    char* line = NULL;
+    size_t len = 0;
+    int read;
+
+    if (interactive == true)
+        printf("> ");
+
+    read = getline(&line, &len, fp);
+
+    if (read == -1)
+        return NULL;
+    else {
+        printf("Retrieved line of length %d :\n", read);
+        printf("%s", line);
+    }
+    return line;
 }

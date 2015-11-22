@@ -51,9 +51,6 @@ void eval(struct Section* section){
                             int prevVal, nextVal;
                             int val = 0;
 
-                            //int prevVal = atoi(section->prev->string);
-                            //int nextVal = atoi(section->next->string);
-
                             struct Variable* varptr;
                             switch (section->prev->datatype){
                                 case TYPE_INT:
@@ -73,6 +70,7 @@ void eval(struct Section* section){
                                     break;
                                 default:
                                     printf("This really shouldn't be happening. Arithmetic expression type check didn't catch incorrect type\n");
+                                    return;
                                     break;
                             }
                             switch (section->next->datatype){
@@ -93,6 +91,7 @@ void eval(struct Section* section){
                                     break;
                                 default:
                                     printf("This really shouldn't be happening. Arithmetic expression type check didn't catch incorrect type\n");
+                                    return;
                                     break;
                             }
 
@@ -119,6 +118,7 @@ void eval(struct Section* section){
                                 default:
                                     printf("Something went incredibly wrong with the evaluation of arithmetic\n");
                                     status = EStatus_Error;
+                                    return;
                                     break;
                             }
                             printf("%s%s%s=%d\n",
