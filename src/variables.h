@@ -11,5 +11,6 @@ struct Variable* create_variable_int(const char* name, int datatype, int value);
 
 void add_variable(struct Variable* var);
 struct Variable* get_variable(const char* name);
+void purge_all_variables();
 
 #endif

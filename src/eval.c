@@ -14,12 +14,10 @@ enum EvalStatus {
 
 void eval(struct Section* section){
     printf("# Evaluating...\n");
+    struct Section* prev_section = section;
     int status = EStatus_OK;
     while(status == EStatus_OK){
-        if (section == NULL){
-            status = EStatus_Done;
-        }
-        else {
+        if (section != NULL){
             switch (section->datatype){
                 case TYPE_VAR:
                 case TYPE_INT:
@@ -218,7 +216,18 @@ void eval(struct Section* section){
                     }
                     break;
             }
+            prev_section = section;
             section = section->prev;
         }
+        else {
+            status = EStatus_Done;
+        }
+    }
+    struct Section* temp_section;
+    section = prev_section;
+    while (section != NULL){
+        temp_section = section;
+        section = section->next;
+        free_section(temp_section);
     }
 }

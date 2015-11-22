@@ -39,7 +39,9 @@ char* input_getline(){
 
     read = getline(&line, &len, fp);
 
-    if (read == -1)
+    if (read == 0)
+        return input_getline();
+    else if (read == -1)
         return NULL;
     else {
         printf("Retrieved line of length %d :\n", read);

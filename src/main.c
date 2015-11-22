@@ -9,6 +9,7 @@
 #include "datatypes.h"
 #include "parser.h"
 #include "eval.h"
+#include "variables.h"
 
 void cleanup();
 
@@ -37,13 +38,13 @@ int main(const int argc, const char* argv[]){
     bool done = false;
     while (done == false)
     {
-        free(line);
         line = input_getline();
         if (line == NULL){
-            done = true;
+            done = true; 
             exit(SIGINT);
         }
         section = parser(line);
+        free(line);
         eval(section);
     }
     exit(SIGINT);
@@ -88,5 +89,7 @@ int parse_switches(const int argc, const char* argv[]){
 }
 
 void cleanup(){
+    printf("Exit\n");
     input_close();
+    purge_all_variables();
 }

@@ -10,15 +10,25 @@
 
 void* create_section(const int datatype, const char* string){
     struct Section* section = malloc(sizeof(struct Section));
+    if (section == NULL)
+        goto SECTION_MEMERROR;
+
     section->datatype = datatype;
 
     int len = strlen(string);
-    section->string = malloc(len*sizeof(char));
+    section->string = NULL;
+    section->string = malloc((len+1)*sizeof(char));
+    if (section->string == NULL)
+        goto SECTION_MEMERROR;
     strcpy(section->string, string);
 
     section->prev = NULL;
     section->next = NULL;
     return section;
+
+    SECTION_MEMERROR:
+    printf("ERROR: Couldn't allocate memory for a new section\n");
+    exit(-1);
 }
 
 void free_section(struct Section* section){
@@ -37,7 +47,7 @@ void* parser(char* string){
     int datatype = TYPE_NONE;
     int datatype_starti = 0;
     int datatype_endi = 0;
-    int prev_datatype;
+    int prev_datatype = TYPE_NONE;
     for (int i=0; i<=len; i++){
         datatype_endi = i-1;
         // Types with escape chars
@@ -144,6 +154,7 @@ void* parser(char* string){
                     printf("(%d,%d,%d), ", datatype_starti, datatype_endi, len-1);
 
                     section = (struct Section*) create_section(prev_datatype, datastring);
+                    free(datastring);
                     if (last_section == NULL)
                         last_section = section;
                     else {

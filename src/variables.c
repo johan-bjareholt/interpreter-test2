@@ -18,7 +18,7 @@ struct Variable* create_variable_empty(const char* name, int datatype){
     struct Variable* var = malloc(sizeof(struct Variable));
 
     int len = strlen(name);
-    var->name = malloc(len*sizeof(char));
+    var->name = malloc((len+1)*sizeof(char));
     strcpy(var->name, name);
 
     var->datatype = datatype;
@@ -84,4 +84,23 @@ struct Variable* get_variable(const char* name){
     if (hit == true)
         result = node->variable;
     return result;
+}
+
+void delete_node(struct Node* node){
+    free(node->variable->name);
+    free(node->variable->value);
+    free(node->variable);
+    free(node);
+}
+
+void purge_all_variables(){
+    for (int i=0; i<TABLESIZE; i++){
+        struct Node* node_to_delete;
+        while (table[i] != NULL){
+            node_to_delete = table[i];
+            table[i] = table[i]->next;
+            delete_node(node_to_delete);
+        }
+
+    }
 }
