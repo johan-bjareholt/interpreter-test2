@@ -184,11 +184,11 @@ void eval(struct Section* section){
                             struct Variable* var = get_variable(section->prev->string);
                             if (var != NULL){
                                 if (var->datatype == TYPE_INT){
-                                    printf("Variable %s was assigned value %d\n",
+                                    printf("Variable %s has value %d\n",
                                         var->name, *(int*)var->value);
                                 }
                                 if (var->datatype == TYPE_STR){
-                                    printf("Variable %s was assigned value \"%s\"\n",
+                                    printf("Variable %s has value \"%s\"\n",
                                         var->name, (const char*)var->value);
                                 }
                             }

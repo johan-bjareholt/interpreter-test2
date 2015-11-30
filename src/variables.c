@@ -59,30 +59,39 @@ int generate_hash(const char* string){
     return hash;
 }
 
-void add_variable(struct Variable* var){
-    int hash = generate_hash(var->name);
+bool add_variable(struct Variable* var){
+    bool success = false;
 
     struct Node* node;
 
     node = get_node(var->name);
     if (node != NULL){
-        //if (node->variable->datatype == var->datatype){
-        //    node->variable->
-        //}
-        printf("Variable name %s is already assigned\n", var->name);
-        free(node);
-        exit(-1);
+        if (node->variable->datatype == var->datatype){
+            free(node->variable);
+            node->variable = var;
+            success = true;
+        }
+        else {
+            printf("Variable %s of type %s cannot be assigned to value of type %s\n",
+                var->name, DataTypeNames[node->variable->datatype], DataTypeNames[var->datatype]);
+            free(var);
+            success = false;
+        }
     }
+    else {
+        int hash = generate_hash(var->name);
+        node = malloc(sizeof(struct Node));
+        node->variable = var;
 
-    node = malloc(sizeof(struct Node));
-    node->variable = var;
+        if (table[hash] != NULL)
+            node->next = table[hash];
+        else
+            node->next = NULL;
 
-    if (table[hash] != NULL)
-        node->next = table[hash];
-    else
-        node->next = NULL;
-
-    table[hash] = node;
+        table[hash] = node;
+        success = true;
+    }
+    return success;
 }
 
 struct Node* get_node(const char* name){
