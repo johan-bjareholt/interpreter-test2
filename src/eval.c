@@ -162,6 +162,7 @@ void eval(struct Section* section){
                             status = EStatus_Error;
                         }
                         else if (section->next->datatype != TYPE_INT &&
+                                 section->next->datatype != TYPE_STR &&
                                  section->next->datatype != TYPE_VAR){
                             printf("%s is of type %s and cannot be assigned to %s of type %s\n",
                                     section->prev->string, DataTypeNames[section->prev->datatype],
@@ -171,12 +172,24 @@ void eval(struct Section* section){
                         else {
                             printf("Assigning %s to %s\n",
                                 section->next->string, section->prev->string);
-                            create_variable_int(section->prev->string, section->next->datatype, atoi(section->next->string));
+                            if (section->next->datatype == TYPE_INT)
+                                create_variable_int(section->prev->string, atoi(section->next->string));
+                            else if (section->next->datatype == TYPE_STR){
+                                create_variable_str(section->prev->string, section->next->string);
+                            }
+                            else if (section->next->datatype == TYPE_VAR){
+                                printf("Var to var assignment is not yet implemented\n");
+                                status = EStatus_Error;
+                            }
                             struct Variable* var = get_variable(section->prev->string);
                             if (var != NULL){
                                 if (var->datatype == TYPE_INT){
                                     printf("Variable %s was assigned value %d\n",
                                         var->name, *(int*)var->value);
+                                }
+                                if (var->datatype == TYPE_STR){
+                                    printf("Variable %s was assigned value \"%s\"\n",
+                                        var->name, (const char*)var->value);
                                 }
                             }
                             else {

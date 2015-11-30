@@ -7,7 +7,8 @@ struct Variable {
     void* value;
 };
 
-struct Variable* create_variable_int(const char* name, int datatype, int value);
+struct Variable* create_variable_int(const char* name, int value);
+struct Variable* create_variable_str(const char* name, const char* value);
 
 void add_variable(struct Variable* var);
 struct Variable* get_variable(const char* name);

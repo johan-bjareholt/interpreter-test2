@@ -30,10 +30,17 @@ struct Variable* create_variable_empty(const char* name, int datatype){
     return var;
 }
 
-struct Variable* create_variable_int(const char* name, int datatype, int value){
-    struct Variable* var = create_variable_empty(name, datatype);
+struct Variable* create_variable_int(const char* name, int value){
+    struct Variable* var = create_variable_empty(name, TYPE_INT);
     var->value = malloc(sizeof(int));
     memcpy(var->value, &value, sizeof(int));
+    return var;
+}
+
+struct Variable* create_variable_str(const char* name, const char* value){
+    struct Variable* var = create_variable_empty(name, TYPE_STR);
+    var->value = malloc((strlen(value)+1)*sizeof(char));
+    strcpy(var->value, value);
     return var;
 }
 
@@ -101,6 +108,5 @@ void purge_all_variables(){
             table[i] = table[i]->next;
             delete_node(node_to_delete);
         }
-
     }
 }
