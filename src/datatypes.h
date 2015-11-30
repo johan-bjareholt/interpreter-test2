@@ -14,6 +14,7 @@ enum DataTypes {
     TYPE_MODULO,
     TYPE_ASSIGNMENT,
     TYPE_COMPARISON,
+    TYPE_PREPROCESS,
 };
 
 extern char* DataTypeNames[];

@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdio.h>
 #include <stdbool.h>
 #include <string.h>
 
@@ -61,11 +62,20 @@ int generate_hash(const char* string){
 void add_variable(struct Variable* var){
     int hash = generate_hash(var->name);
 
-    struct Node* node = malloc(sizeof(struct Node));
-    node->variable = var;
+    struct Node* node;
 
-    // ToDo
-    // Check if variable with the same name already exists
+    node = get_node(var->name);
+    if (node != NULL){
+        //if (node->variable->datatype == var->datatype){
+        //    node->variable->
+        //}
+        printf("Variable name %s is already assigned\n", var->name);
+        free(node);
+        exit(-1);
+    }
+
+    node = malloc(sizeof(struct Node));
+    node->variable = var;
 
     if (table[hash] != NULL)
         node->next = table[hash];
@@ -75,7 +85,7 @@ void add_variable(struct Variable* var){
     table[hash] = node;
 }
 
-struct Variable* get_variable(const char* name){
+struct Node* get_node(const char* name){
     int hash = generate_hash(name);
     struct Node* node = table[hash];
 
@@ -86,11 +96,15 @@ struct Variable* get_variable(const char* name){
         else
             node = node->next;
     }
+    return node;
+}
 
-    struct Variable* result = NULL;
-    if (hit == true)
-        result = node->variable;
-    return result;
+struct Variable* get_variable(const char* name){
+    struct Variable* var = NULL;
+    struct Node* node = get_node(name);
+    if (node != NULL)
+        var = node->variable;
+    return var;
 }
 
 void delete_node(struct Node* node){

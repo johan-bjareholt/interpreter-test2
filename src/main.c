@@ -11,6 +11,7 @@
 #include "eval.h"
 #include "variables.h"
 
+void handleInterrupt();
 void cleanup();
 
 int parse_switches(const int argc, const char* argv[]);
@@ -18,7 +19,7 @@ int parse_switches(const int argc, const char* argv[]);
 const char* filename = NULL;
 
 int main(const int argc, const char* argv[]){
-    signal(SIGINT, cleanup);
+    signal(SIGINT, handleInterrupt);
 
     if (parse_switches(argc, argv) < 0)
         return -1;
@@ -40,14 +41,18 @@ int main(const int argc, const char* argv[]){
     {
         line = input_getline();
         if (line == NULL){
-            done = true; 
-            exit(SIGINT);
+            done = true;
         }
-        section = parser(line);
-        free(line);
-        eval(section);
+        else {
+            section = parser(line);
+            free(line);
+            eval(section);
+        }
     }
-    exit(SIGINT);
+
+    cleanup();
+
+    return EXIT_SUCCESS;
 }
 
 int parse_switches(const int argc, const char* argv[]){
@@ -82,10 +87,16 @@ int parse_switches(const int argc, const char* argv[]){
         else {
             SWITCH_INVALID:
             printf("Invalid switch %s\n", arg);
-            return -1;
+            exit(-1);
         }
     }
     return 0;
+}
+
+void handleInterrupt(){
+    cleanup();
+    printf("test\n");
+    exit(EXIT_SUCCESS);
 }
 
 void cleanup(){

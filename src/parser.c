@@ -72,6 +72,18 @@ void* parser(char* string){
             }
             datatype_endi = i;
         }
+        else if (datatype == TYPE_PREPROCESS){
+            datatype = TYPE_NONE;
+            while ( string[i] != ')' && i < len)
+                i++;
+            if (string[i] != ')'){
+                printf("No end ) for preprocessor! Exiting\n");
+                exit(-1);
+            }
+            datatype_endi = i;
+            printf("Preprocessing is not yet fully implemented, exiting\n");
+            exit(-1);
+        }
         // Alphanumerics
         // A-Z
         else if (string[i] >= 'A' && string[i] <= 'Z'){
@@ -102,15 +114,19 @@ void* parser(char* string){
                     else
                         datatype = TYPE_NONE;
                     break;
-                case '(': // Function start
-                    if (prev_datatype != TYPE_VAR){
-                        printf("Error, function expected but there is no function mentioned to execute, exiting\n");
-                        exit(-1);
+                case '(':
+                    // Function start
+                    if (prev_datatype == TYPE_VAR){
+                        prev_datatype = TYPE_FUNC;
+                        datatype = TYPE_FUNC;
                     }
-                    prev_datatype = TYPE_FUNC;
-                    datatype = TYPE_FUNC;
+                    // Preprocess start
+                    else {
+                        prev_datatype = TYPE_PREPROCESS;
+                        datatype = TYPE_PREPROCESS;
+                    }
                     break;
-                case ')': // Function end
+                case ')': // Function/Preprocess end
                     datatype = TYPE_NONE;
                     break;
                 case '=': // Assign
