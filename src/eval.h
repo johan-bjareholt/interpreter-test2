@@ -3,6 +3,6 @@
 
 #include "parser.h"
 
-void eval(struct Section* section);
+struct Section* eval(struct Section* section);
 
 #endif

@@ -7,8 +7,9 @@
 #include "datatypes.h"
 #include "input.h"
 #include "parser.h"
+#include "eval.h"
 
-void* create_section(const int datatype, const char* string){
+struct Section* create_section(const int datatype, const char* string){
     struct Section* section = malloc(sizeof(struct Section));
     if (section == NULL)
         goto SECTION_MEMERROR;
@@ -32,11 +33,14 @@ void* create_section(const int datatype, const char* string){
 }
 
 void free_section(struct Section* section){
-    free(section->string);
-    free(section);
+    if (section != NULL){
+        if (section->string != NULL)
+            free(section->string);
+        free(section);
+    }
 }
 
-void* parser(char* string){
+struct Section* parser(char* string){
     printf("# Parsing...\n");
 
     int len = strlen(string);
@@ -81,8 +85,6 @@ void* parser(char* string){
                 exit(-1);
             }
             datatype_endi = i;
-            printf("Preprocessing is not yet fully implemented, exiting\n");
-            exit(-1);
         }
         // Alphanumerics
         // A-Z
@@ -169,8 +171,23 @@ void* parser(char* string){
                     printf("%s", datastring);
                     printf("(%d,%d,%d), ", datatype_starti, datatype_endi, len-1);
 
-                    section = (struct Section*) create_section(prev_datatype, datastring);
-                    free(datastring);
+                    if (prev_datatype == TYPE_PREPROCESS){
+                        datastring++;
+                        if (i< len-3)
+                            datastring[len-3] = '\0';
+                        printf("%s\n", datastring);
+                        section = parser(datastring);
+                        section = eval(section);
+                        if (section == NULL){
+                            printf("Something with the parsing of a preprocess went wrong %s\n", datastring);
+                            exit(-1);
+                        }
+                        datastring--; // Needed for free(datastring) to not screw up
+                        printf("# Back to parsing\n");
+                    }
+                    else {
+                        section = create_section(prev_datatype, datastring);
+                    }
                     if (last_section == NULL)
                         last_section = section;
                     else {
@@ -179,6 +196,7 @@ void* parser(char* string){
                         last_section = section;
                     }
                     printf("\n");
+                    free(datastring);
                 }
             }
             datatype_starti = i;

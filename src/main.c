@@ -46,7 +46,10 @@ int main(const int argc, const char* argv[]){
         else {
             section = parser(line);
             free(line);
-            eval(section);
+            if (section != NULL){
+                section = eval(section);
+                free_section(section);
+            }
         }
     }
 

@@ -12,10 +12,10 @@ enum EvalStatus {
     EStatus_Error,
 };
 
-void eval(struct Section* section){
+struct Section* eval(struct Section* section){
     printf("# Evaluating...\n");
-    struct Section* prev_section = section;
     int status = EStatus_OK;
+    struct Section* section_prev;
     while(status == EStatus_OK){
         if (section != NULL){
             switch (section->datatype){
@@ -62,13 +62,13 @@ void eval(struct Section* section){
                                         }
                                         else {
                                             printf("Variable %s isn't defined\n", varptr->name);
-                                            return;
+                                            goto EVAL_ERROR;
                                         }
                                     }
                                     break;
                                 default:
                                     printf("This really shouldn't be happening. Arithmetic expression type check didn't catch incorrect type\n");
-                                    return;
+                                    goto EVAL_ERROR;
                                     break;
                             }
                             switch (section->next->datatype){
@@ -82,14 +82,14 @@ void eval(struct Section* section){
                                             nextVal = *(int*)varptr->value;
                                         }
                                         else {
-                                            printf("Variable %s isn't defined\n", varptr->name);
-                                            return;
+                                            printf("Variable %s isn't datatypedefined\n", varptr->name);
+                                            goto EVAL_ERROR;
                                         }
                                     }
                                     break;
                                 default:
                                     printf("This really shouldn't be happening. Arithmetic expression type check didn't catch incorrect type\n");
-                                    return;
+                                    goto EVAL_ERROR;
                                     break;
                             }
 
@@ -106,7 +106,7 @@ void eval(struct Section* section){
                                 case TYPE_DIVISION:
                                     if (nextVal == 0){
                                         printf("Division by zero\n");
-                                        return;
+                                        goto EVAL_ERROR;
                                     }
                                     val = prevVal / nextVal;
                                     break;
@@ -116,7 +116,7 @@ void eval(struct Section* section){
                                 default:
                                     printf("Something went incredibly wrong with the evaluation of arithmetic\n");
                                     status = EStatus_Error;
-                                    return;
+                                    goto EVAL_ERROR;
                                     break;
                             }
                             printf("%s%s%s=%d\n",
@@ -229,18 +229,17 @@ void eval(struct Section* section){
                     }
                     break;
             }
-            prev_section = section;
+            section_prev = section;
             section = section->prev;
         }
         else {
             status = EStatus_Done;
         }
     }
-    struct Section* temp_section;
-    section = prev_section;
-    while (section != NULL){
-        temp_section = section;
-        section = section->next;
-        free_section(temp_section);
+    if (status == EStatus_Error){
+        EVAL_ERROR:
+        return NULL;
     }
+    printf("%s\n", section_prev->string);
+    return section_prev;
 }

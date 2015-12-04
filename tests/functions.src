@@ -1,1 +1,3 @@
 funccall()
+funccall(variables, arguments)
+funccall(argument, another argument)

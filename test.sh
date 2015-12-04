@@ -1,10 +1,11 @@
 #!/bin/bash
 
-testcount=3
+testcount=0
 testpass=0
 failedtests=""
 
 function test {
+	testcount=$(($testcount+1))
 	./interpreter -i $1
 	if [ $? -eq 0 ]; then
 		testpass=$(($testpass+1))
@@ -15,6 +16,7 @@ function test {
 
 test "tests/arithmetic.src"
 test "tests/assignment.src"
+test "tests/preprocess.src"
 test "tests/functions.src"
 
 printf "%d/%d tests passed\n" $testpass $testcount

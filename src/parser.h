@@ -10,9 +10,9 @@ struct Section {
     struct Section* next;
 };
 
-void* create_section(const int datatype, const char* string);
+struct Section* create_section(const int datatype, const char* string);
 void free_section(struct Section* section);
 
-void* parser(char* string);
+struct Section* parser(char* string);
 
 #endif
