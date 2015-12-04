@@ -10,7 +10,6 @@ Currently has limited support for other datatypes than integers.
 run test.sh from the project root directory to test all testfiles in the testing directory.
 
 #### To-Do
-- Finish preprocess functionality and the return value from them
 - Finish support for functions
 - String manipulation
 - Support for floats
