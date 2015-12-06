@@ -6,6 +6,7 @@
 struct Section {
     int datatype;
     char* string;
+    char* substring;
     struct Section* prev;
     struct Section* next;
 };

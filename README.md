@@ -11,5 +11,8 @@ run test.sh from the project root directory to test all testfiles in the testing
 
 #### To-Do
 - Finish support for functions
+- if statements
+- while statements
 - String manipulation
 - Support for floats
+- for statements

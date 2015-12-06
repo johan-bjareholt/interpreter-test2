@@ -1,3 +1,22 @@
 funccall()
 funccall(variables, arguments)
 funccall(argument, another argument)
+
+functest1:
+ test
+
+functest2:
+  test1
+  test2
+  test3
+  test4
+  test5
+  test6
+
+functest3:
+    testing 123 123 234 234
+    holla mc dolla
+    this will be a pretty long line, you might think that I'll be done soon but I only got started. four ants is less than 5 elephants. magnus and brasse are pretty cool guys, right? Atleast i think so. Alrighty, I'll stop writing now...
+
+
+test
