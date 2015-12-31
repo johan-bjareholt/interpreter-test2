@@ -19,8 +19,41 @@ struct Section* eval(struct Section* section){
     while(status == EStatus_OK){
         if (section != NULL){
             switch (section->datatype){
+                case TYPE_NONE:
                 case TYPE_VAR:
                 case TYPE_INT:
+                case TYPE_STR:
+                    break;
+                case TYPE_FUNC:
+                    // If it doesn't have a substring, it's a function definition
+                    printf("Function :D\n");
+                    if (section->substring != NULL){
+                        printf("%s\n", section->string);
+                        printf("%s\n", section->substring);
+                        // Save the function
+                        create_variable_func(section->string, section->substring);
+                        printf("Function %s was successfully defined\n", section->string);
+                    }
+                    else { // Call the function
+                        struct Variable* var = get_variable(section->string);
+                        if (var == NULL){
+                            printf("Couldn't find variable %s\n", section->string);
+                        }
+                        else {
+                            if (var->datatype != TYPE_FUNC){
+                                printf("Cannot call variable %s, because it's not a function\n", section->string);
+                            }
+                            else {
+                                printf("Yes\n");
+                                printf("%s\n", (char*)var->value);
+                                struct Section* section = parser(var->value);
+                                if (section != NULL){
+                                    section = eval(section);
+                                    free_section(section);
+                                }
+                            }
+                        }
+                    }
                     break;
                 case TYPE_MINUS:
                 case TYPE_PLUS:
@@ -227,6 +260,15 @@ struct Section* eval(struct Section* section){
                             }
                         }
                     }
+                    break;
+                case TYPE_PREPROCESS:
+                case TYPE_SUBPROCESS:
+                    printf("%s, %s\n", section->string, section->substring);
+                    printf("Datatype %s is not supposed to be able to be contained in a section, exiting\n", DataTypeNames[section->datatype]);
+                    exit(-1);
+                    break;
+                default:
+                    printf("Datatype index out of range: %i\n", section->datatype);
                     break;
             }
             section_prev = section;

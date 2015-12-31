@@ -10,7 +10,7 @@ Currently has limited support for other datatypes than integers.
 run test.sh from the project root directory to test all testfiles in the testing directory.
 
 #### To-Do
-- Finish support for functions
+- Variable and return value support for functions
 - if statements
 - while statements
 - String manipulation

@@ -19,6 +19,7 @@ struct Section* create_section(const int datatype, const char* string){
     int len = strlen(string);
     section->string = NULL;
     section->string = malloc((len+1)*sizeof(char));
+    section->substring = NULL;
     if (section->string == NULL)
         goto SECTION_MEMERROR;
     strcpy(section->string, string);
@@ -46,8 +47,10 @@ bool section_add_substring(struct Section* section, const char* substring){
 
 void free_section(struct Section* section){
     if (section != NULL){
-        if (section->string != NULL)
+        if (section->string != NULL){
             free(section->string);
+            free(section->substring);
+        }
         free(section);
     }
 }
@@ -144,7 +147,15 @@ struct Section* parser(char* string){
                     datatype = TYPE_NONE;
                     break;
                 case ':':
-                    datatype = TYPE_SUBPROCESS;
+                    // Subprocess
+                    datatype = TYPE_NONE;
+                    if (last_section == NULL || last_section->datatype != TYPE_FUNC){
+                        printf("Cannot add subprocess to a datatype that is not a function, exiting\n");
+                        exit(-1);
+                    }
+                    char* substring = get_subprocess_section();
+                    section_add_substring(last_section, substring);
+                    free(substring);
                     break;
                 case '=': // Assign
                     datatype = TYPE_ASSIGNMENT;
@@ -185,66 +196,6 @@ struct Section* parser(char* string){
 
                     printf("%s", datastring);
                     printf("(%d,%d,%d), ", datatype_starti, datatype_endi, len-1);
-
-                    // Subprocess
-                    if (prev_datatype == TYPE_SUBPROCESS){
-                        printf("Subprocess is not properly implelemted yet\n");
-                        char* substring;
-                        char* line = input_getline();
-                        if (line == NULL){
-                            printf("I'm noping out of here, bye!\n");
-                        }
-                        else {
-                            // Count spaces
-                            int space_count = 0;
-                            for (int i=0; line[i] == ' '; i++)
-                                space_count++;
-                            printf("Spacing: %d\n", space_count);
-                            if (space_count < 1){
-                                printf("No spacing after subprocess, exiting\n");
-                                exit(-1);
-                            }
-                            // Move line to substring and remove spacing
-                            int newlen = strlen(line)-space_count+1;
-                            substring = malloc(newlen);
-                            strncpy(substring, line+space_count, newlen);
-                            free(line);
-
-                            int spacing = 0;
-                            do {
-                                line = input_getline();
-                                // Count spaces
-                                spacing = 0;
-                                for (int i=0; line[i] == ' ' && line[i] != '\0'; i++)
-                                    spacing++;
-                                if (spacing == space_count){
-                                    // Append line to substring
-                                    int oldlen = strlen(substring);
-                                    char* old_substring = substring;
-                                    line += spacing;
-                                    int newlen = strlen(line);
-                                    int totlen = oldlen + newlen + 2;
-                                    substring = malloc(totlen);
-                                    strncpy(substring, old_substring, oldlen);
-                                    substring[oldlen-1] = '\n';
-                                    strncpy(substring+oldlen, line, newlen);
-                                    substring[totlen-1] = '\0';
-
-                                    printf("%s\n", substring);
-
-                                    line -= spacing;
-                                    free(line);
-                                    free(old_substring);
-                                }
-                                else if (strlen(line) > 1){
-                                    printf("Invalid spacing, exiting\n");
-                                    exit(-1);
-                                }
-                            } while (spacing == space_count);
-                            section = create_section(prev_datatype, datastring);
-                            section_add_substring(section, substring);
-                        }
-                    }
                     // Preprocess
                     if (prev_datatype == TYPE_PREPROCESS){
                         datastring++;
@@ -282,4 +233,67 @@ struct Section* parser(char* string){
         prev_datatype = datatype;
     }
     return last_section;
+}
+
+
+char* get_subprocess_section(){
+    char* substring = NULL;
+    char* line = input_getline();
+    if (line == NULL){
+        printf("I'm noping out of here, bye!\n");
+        exit(-1);
+    }
+
+    // Count spaces
+    int space_count = 0;
+    for (int i=0; line[i] == ' '; i++)
+        space_count++;
+    printf("Spacing: %d\n", space_count);
+    if (space_count < 1){
+        printf("No spacing after subprocess, exiting\n");
+        exit(-1);
+    }
+    // Move line to substring and remove spacing
+    int newlen = strlen(line)-space_count+1;
+    substring = malloc(newlen);
+    strncpy(substring, line+space_count, newlen);
+    free(line);
+
+    int spacing = 0;
+    do {
+        line = input_getline();
+        // Count spaces
+        spacing = 0;
+        if (line == NULL){
+            printf("End of input\n");
+        }
+        else {
+            for (int i=0; strlen(line) > i && line[i] == ' ' && line[i] != '\0'; i++)
+                spacing++;
+            if (spacing == space_count){
+                // Append line to substring
+                int oldlen = strlen(substring);
+                char* old_substring = substring;
+                line += spacing;
+                int newlen = strlen(line);
+                int totlen = oldlen + newlen + 2;
+                substring = malloc(totlen);
+                strncpy(substring, old_substring, oldlen);
+                substring[oldlen-1] = '\n';
+                strncpy(substring+oldlen, line, newlen);
+                substring[totlen-1] = '\0';
+
+                printf("%s\n", substring);
+
+                line -= spacing;
+                free(line);
+                free(old_substring);
+            }
+            else if (strlen(line) > 1){
+                printf("Invalid spacing, exiting\n");
+                exit(-1);
+            }
+        }
+    } while (spacing == space_count);
+    return substring;
 }

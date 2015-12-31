@@ -16,4 +16,6 @@ void free_section(struct Section* section);
 
 struct Section* parser(char* string);
 
+char* get_subprocess_section();
+
 #endif

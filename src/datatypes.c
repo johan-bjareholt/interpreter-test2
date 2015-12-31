@@ -14,4 +14,5 @@ char* DataTypeNames[] = {
     "=",
     "==",
     "(Preprocess)",
+    "(Subprocess)",
 };
