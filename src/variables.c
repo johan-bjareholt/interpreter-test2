@@ -8,12 +8,24 @@
 
 #define TABLESIZE 100
 
+/*
+    Local definitions
+*/
+
+// Node stuff
 struct Node {
     struct Variable* variable;
     struct Node* next;
 };
+static struct Node* table[TABLESIZE];
+static struct Node* get_node(const char* name);
+static void delete_node(struct Node* node);
+// Hash
+static int generate_hash(const char* string);
 
-struct Node* table[TABLESIZE];
+/*
+    Global declarations
+*/
 
 struct Variable* create_variable_empty(const char* name, int datatype){
     struct Variable* var = malloc(sizeof(struct Variable));
@@ -52,20 +64,6 @@ struct Variable* create_variable_func(const char* name, const char* value){
     return var;
 }
 
-int generate_hash(const char* string){
-    // Count name len
-    int len = strlen(string);
-    if (len>4)
-        len = 4;
-    // Generate hash
-    int hash = 0;
-    for (int ci=0; ci<len; ci++)
-        hash += string[ci];
-    hash %= TABLESIZE;
-    // Return
-    return hash;
-}
-
 bool add_variable(struct Variable* var){
     bool success = false;
 
@@ -101,7 +99,49 @@ bool add_variable(struct Variable* var){
     return success;
 }
 
-struct Node* get_node(const char* name){
+struct Variable* get_variable(const char* name){
+    struct Variable* var = NULL;
+    struct Node* node = get_node(name);
+    if (node != NULL)
+        var = node->variable;
+    return var;
+}
+
+void purge_all_variables(){
+    for (int i=0; i<TABLESIZE; i++){
+        struct Node* node_to_delete;
+        while (table[i] != NULL){
+            node_to_delete = table[i];
+            table[i] = table[i]->next;
+            delete_node(node_to_delete);
+        }
+    }
+}
+
+/*
+    Local declarations
+*/
+
+// Hashing
+static int generate_hash(const char* string){
+    // Count name len
+    int len = strlen(string);
+    if (len>4)
+        len = 4;
+    // Generate hash
+    int hash = 0;
+    for (int ci=0; ci<len; ci++)
+        hash += string[ci];
+    hash %= TABLESIZE;
+    // Return
+    return hash;
+}
+
+/*
+    Local node definitions
+*/
+
+static struct Node* get_node(const char* name){
     int hash = generate_hash(name);
     struct Node* node = table[hash];
 
@@ -115,28 +155,9 @@ struct Node* get_node(const char* name){
     return node;
 }
 
-struct Variable* get_variable(const char* name){
-    struct Variable* var = NULL;
-    struct Node* node = get_node(name);
-    if (node != NULL)
-        var = node->variable;
-    return var;
-}
-
-void delete_node(struct Node* node){
+static void delete_node(struct Node* node){
     free(node->variable->name);
     free(node->variable->value);
     free(node->variable);
     free(node);
-}
-
-void purge_all_variables(){
-    for (int i=0; i<TABLESIZE; i++){
-        struct Node* node_to_delete;
-        while (table[i] != NULL){
-            node_to_delete = table[i];
-            table[i] = table[i]->next;
-            delete_node(node_to_delete);
-        }
-    }
 }

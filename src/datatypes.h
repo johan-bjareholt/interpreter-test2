@@ -14,7 +14,7 @@ enum DataTypes {
     TYPE_MODULO,
     TYPE_ASSIGNMENT,
     TYPE_COMPARISON,
-    
+    //
     TYPE_PREPROCESS,
     TYPE_SUBPROCESS,
 };

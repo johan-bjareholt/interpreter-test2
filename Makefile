@@ -1,7 +1,7 @@
 
 NAME=interpreter
 
-SRCF	= main.c parser.c datatypes.c eval.c input.c variables.c
+SRCF	= main.c parser.c datatypes.c eval.c input.c variables.c section.c
 SRC	= $(patsubst %,src/%,$(SRCF))
 
 CFLAGS += --std=c99 -Wall -g

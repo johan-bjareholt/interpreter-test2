@@ -26,7 +26,6 @@ struct Section* eval(struct Section* section){
                     break;
                 case TYPE_FUNC:
                     // If it doesn't have a substring, it's a function definition
-                    printf("Function :D\n");
                     if (section->substring != NULL){
                         printf("%s\n", section->string);
                         printf("%s\n", section->substring);
@@ -238,7 +237,7 @@ struct Section* eval(struct Section* section){
                         status = EStatus_Error;
                     }
                     else if (section->next == NULL){
-                        printf("%s has nothing after it to calculate with\n", section->string);
+                        printf("%s has nothing after it to compare with\n", section->string);
                         status = EStatus_Error;
                     }
                     else {

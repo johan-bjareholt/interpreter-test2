@@ -98,7 +98,6 @@ int parse_switches(const int argc, const char* argv[]){
 
 void handleInterrupt(){
     cleanup();
-    printf("test\n");
     exit(EXIT_SUCCESS);
 }
 
