@@ -9,6 +9,20 @@
 #include "parser.h"
 #include "eval.h"
 
+char* getmoreinput(char* oldline){
+    char* line = input_getline();
+    if (strlen(line) < 2){
+        return getmoreinput(oldline);
+    }
+    else {
+        char* newline = malloc(strlen(oldline)+strlen(line)-1);
+        strcpy(newline, oldline);
+        strcpy(newline+strlen(oldline)-1, line);
+        free(oldline);
+        return newline;
+    }
+}
+
 struct Section* parser(char* string){
     printf("# Parsing...\n");
 
@@ -37,21 +51,31 @@ struct Section* parser(char* string){
         }
         else if (datatype == TYPE_FUNC){
             datatype = TYPE_NONE;
+            FUNC_LOOP_START:
             while ( string[i] != ')' && i < len)
                 i++;
             if (string[i] != ')'){
-                printf("No end ) for function! Exiting\n");
-                exit(-1);
+                printf("Need more\n");
+                string = getmoreinput(string);
+                len = strlen(string);
+                i--;
+                printf("%i,%s\n", len, string);
+                goto FUNC_LOOP_START;
             }
             datatype_endi = i;
         }
         else if (datatype == TYPE_PREPROCESS){
             datatype = TYPE_NONE;
+            PREPROCESS_LOOP_START:
             while ( string[i] != ')' && i < len)
                 i++;
             if (string[i] != ')'){
-                printf("No end ) for preprocessor! Exiting\n");
-                exit(-1);
+                printf("Need more\n");
+                string = getmoreinput(string);
+                len = strlen(string);
+                i--;
+                printf("%i,%s\n", len, string);
+                goto PREPROCESS_LOOP_START;
             }
             datatype_endi = i;
         }
