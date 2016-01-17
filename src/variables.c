@@ -58,7 +58,7 @@ struct Variable* create_variable_str(const char* name, const char* value){
 }
 
 struct Variable* create_variable_func(const char* name, const char* value){
-    struct Variable* var = create_variable_empty(name, TYPE_FUNC);
+    struct Variable* var = create_variable_empty(name, TYPE_FUNCDEF);
     var->value = malloc((strlen(value)+1)*sizeof(char));
     strcpy(var->value, value);
     return var;

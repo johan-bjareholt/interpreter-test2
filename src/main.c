@@ -45,12 +45,12 @@ int main(const int argc, const char* argv[]){
         }
         else {
             section = parser(line);
-            free(line);
             if (section != NULL){
                 section = eval(section);
-                free_section(section);
             }
+            free_section(section);
         }
+        free(line);
     }
 
     cleanup();

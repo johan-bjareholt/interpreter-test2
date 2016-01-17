@@ -3,7 +3,9 @@
 char* DataTypeNames[] = {
     "None",
     "Var",
-    "Func",
+    "Funccall",
+    "Funcdef",
+    "Funccontent",
     "Int",
     "Str",
     "+",

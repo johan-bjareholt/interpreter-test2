@@ -14,10 +14,11 @@ struct Section* create_section(const int datatype, const char* string){
     int len = strlen(string);
     section->string = NULL;
     section->string = malloc((len+1)*sizeof(char));
-    section->substring = NULL;
     if (section->string == NULL)
         goto SECTION_MEMERROR;
     strcpy(section->string, string);
+
+    section->substring = NULL;
 
     section->prev = NULL;
     section->next = NULL;

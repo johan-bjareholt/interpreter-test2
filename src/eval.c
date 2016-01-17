@@ -23,23 +23,17 @@ struct Section* eval(struct Section* section){
                 case TYPE_VAR:
                 case TYPE_INT:
                 case TYPE_STR:
+                case TYPE_FUNCCONTENT:
                     break;
-                case TYPE_FUNC:
-                    // If it doesn't have a substring, it's a function definition
-                    if (section->substring != NULL){
-                        printf("%s\n", section->string);
-                        printf("%s\n", section->substring);
-                        // Save the function
-                        create_variable_func(section->string, section->substring);
-                        printf("Function %s was successfully defined\n", section->string);
-                    }
-                    else { // Call the function
+                case TYPE_FUNCCALL:
+                    if (true){
+                        // Call the function
                         struct Variable* var = get_variable(section->string);
                         if (var == NULL){
                             printf("Couldn't find variable %s\n", section->string);
                         }
                         else {
-                            if (var->datatype != TYPE_FUNC){
+                            if (var->datatype != TYPE_FUNCDEF){
                                 printf("Cannot call variable %s, because it's not a function\n", section->string);
                             }
                             else {
@@ -52,6 +46,20 @@ struct Section* eval(struct Section* section){
                                 }
                             }
                         }
+                    }
+                    break;
+                case TYPE_FUNCDEF:
+                    // If it doesn't have a substring, it's a function definition
+                    //if (section->substring != NULL)
+                    printf("%s\n", section->string);
+                    //printf("%s\n", section->substring);
+                    // Save the function
+                    if (section->next->datatype == TYPE_FUNCCONTENT){
+                        create_variable_func(section->string, section->next->string);
+                        printf("Function %s was successfully defined\n", section->string);
+                    }
+                    else {
+                        printf("Compiler error: Function is not proceeded by a string for subprocessing\n");
                     }
                     break;
                 case TYPE_MINUS:
