@@ -11,6 +11,8 @@ run test.sh from the project root directory to test all testfiles in the testing
 
 #### To-Do
 - Argument and return value support for functions
+- Rewrite parser.c
+- Rewrite eval.c with less hardcoding?
 - if statements
 - while statements
 - String manipulation

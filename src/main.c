@@ -6,17 +6,22 @@
 #include <signal.h>
 
 #include "input.h"
-#include "datatypes.h"
-#include "parser.h"
-#include "eval.h"
-#include "variables.h"
+#include "lexer.h"
 
 void handleInterrupt();
 void cleanup();
 
 int parse_switches(const int argc, const char* argv[]);
 
-const char* filename = NULL;
+/*
+- input
+- lexer
+    - non-linear, keep track on all sets
+- parser
+    - Builds the AST
+- halfway interpreter
+- interpreter/compiler
+*/
 
 int main(const int argc, const char* argv[]){
     signal(SIGINT, handleInterrupt);
@@ -24,33 +29,21 @@ int main(const int argc, const char* argv[]){
     if (parse_switches(argc, argv) < 0)
         return -1;
 
-    // Setup input
-    if (filename == NULL)
-        input_set_interactive();
-    else {
-        if (input_set_file(filename) == false)
-            return -1;
-    }
-
     // Interpret
-    char* line = NULL;
-    struct Section* section;
+    char* line;
 
     bool done = false;
     while (done == false)
     {
         line = input_getline();
-        if (line == NULL){
-            done = true;
+        if (line != NULL){
+            printf("%s", line);
+            lex(line);
+            input_consume_line();
         }
         else {
-            section = parser(line);
-            if (section != NULL){
-                section = eval(section);
-            }
-            free_section(section);
+            done = true;
         }
-        free(line);
     }
 
     cleanup();
@@ -59,6 +52,8 @@ int main(const int argc, const char* argv[]){
 }
 
 int parse_switches(const int argc, const char* argv[]){
+    const char* filename = NULL;
+
     // Parse switches
     for (int argi=1; argi<argc; argi++){
         const char* arg = argv[argi];
@@ -93,6 +88,15 @@ int parse_switches(const int argc, const char* argv[]){
             exit(-1);
         }
     }
+
+    // Setup input
+    if (filename == NULL)
+        input_set_interactive();
+    else {
+        if (input_set_file(filename) == false)
+            return -1;
+    }
+
     return 0;
 }
 
@@ -102,7 +106,5 @@ void handleInterrupt(){
 }
 
 void cleanup(){
-    printf("Exit\n");
     input_close();
-    purge_all_variables();
 }

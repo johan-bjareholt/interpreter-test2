@@ -14,11 +14,6 @@ function test {
 	fi
 }
 
-test "tests/arithmetic.src"
-test "tests/assignment.src"
-test "tests/preprocess.src"
-test "tests/functions.src"
-
 printf "%d/%d tests passed\n" $testpass $testcount
 if [ $testpass -eq $testcount ] ; then
 	printf "All tests passed!\n"
