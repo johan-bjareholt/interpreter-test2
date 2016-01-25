@@ -139,9 +139,27 @@ bool isFloat(int pos, char chr){
     return false;
 }
 
+static int str_last_end_pos = -2;
 bool isString(int pos, char chr){
-    // Implement this properly
-    return false;
+    if (str_last_end_pos == pos-1)
+        return false;
+    else
+        str_last_end_pos = -2;
+
+    if (pos == 0){
+        if (chr == '"')
+            return true;
+        else
+            return false;
+    }
+    else {
+        if (chr == '"'){
+            str_last_end_pos = pos;
+            return true;
+        }
+        else
+            return true;
+    }
 }
 
 bool isArithmetic(int pos, char chr){
