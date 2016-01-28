@@ -1,7 +1,0 @@
-intvar1=1
-intvar2 = 2
-intvar3 = 1+3+5
-intvar4 = intvar3/intvar2
-
-strvar1="Testing"
-strvar2 = "Testing"
