@@ -1,10 +1,10 @@
 
 NAME=interpreter
 
-SRCF= main.c input.c lexer.c token.c parser.h
+SRCF= main.c input.c lexer.c token.c ast_builder.c
 SRC	= $(patsubst %,src/%,$(SRCF))
 
-CFLAGS += -std=gnu99 -Wall -g
+CFLAGS += -std=c11 -Wall -g
 
 all:
 	$(CC) $(CFLAGS) $(SRC) -o $(NAME)

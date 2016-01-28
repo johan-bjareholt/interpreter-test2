@@ -44,8 +44,7 @@ struct Token* lex(char* line){
             tat.symbol = false;
         if (tat.integer && !isInteger(pos, line[i]))
             tat.integer = false;
-        if (tat.floatt && !isFloat(pos, line[i]))
-            tat.floatt = false;
+        tat.floatt = isFloat(pos, line[i]);
         if (tat.string && !isString(pos, line[i]))
             tat.string = false;
         if (tat.arithmetic && !isArithmetic(pos, line[i]))
@@ -63,35 +62,34 @@ struct Token* lex(char* line){
         if (result < 0){
             int type = tat_last;
             if (type == -2){
-                printf("Error: Multiple candidates for %i: %s\n", pos, line+tokenstart);
+                printf("Critical error: No candidates for %i: %s\n", pos, line+tokenstart);
             }
             else if (type == -1){
-                printf("Critical error! Type candidates have somehow become corrupted\n");
+                printf("Error: Multiple candidates for %i: %s\n", pos, line+tokenstart);
+                printf("This is typically because of a invalid syntax or invalid char\n");
                 i++;
                 exit(-1);
             }
             // Simply skip spacing
-            else if (type == TT_SPACING){}
+            else if (type == TC_SPACING){}
             else {
                 char* tokenstr = malloc(pos);
                 strncpy(tokenstr, line+tokenstart, pos);
                 // Debug text
-                printf("%s\n", TokenTypeNames[type]);
                 printf("+%i:%s\n", pos, tokenstr);
+                printf("%s\n", TokenCategoryNames[type]);
                 // Create token
-                struct Token* token = create_token();
+                struct Token* token = create_token(type, tokenstr);
                 token->srcname = NULL;
                 token->linenr = input_line_nr();
                 token->posnr = tokenstart;
-                token->tokencategory = type;
-                token->content = tokenstr;
 
                 if (last_token == NULL){
                     last_token = token;
                 }
                 else {
                     last_token->next = token;
-                    token->prev = token;
+                    token->prev = last_token;
                     last_token = token;
                 }
             }
@@ -134,9 +132,31 @@ bool isInteger(int pos, char chr){
         return false;
 }
 
+static int valid_chars = -1;
+static bool point = false;
 bool isFloat(int pos, char chr){
-    // Implement this properly
-    return false;
+    if (valid_chars > pos || pos == 0){
+        valid_chars = -1;
+        point = false;
+    }
+    if (chr >= '0' && chr <= '9')
+        valid_chars++;
+    else if (chr == '.'){
+        if (point)
+            valid_chars = -1;
+        else {
+            point = true;
+            valid_chars++;
+        }
+    }
+    else
+        valid_chars = 0;
+
+    //printf("%i %i %i \n", pos, valid_chars, point );
+    if (valid_chars == pos && point == true)
+        return true;
+    else
+        return false;
 }
 
 static int str_last_end_pos = -2;
@@ -191,7 +211,14 @@ bool isArithmetic(int pos, char chr){
 
 bool isScope(int pos, char chr){
     // Implement this properly
-    return false;
+    if (pos == 0 && (
+            chr == '{' || chr == '}' ||
+            chr == '(' || chr == ')' ||
+            chr == '[' || chr == ']'
+        ))
+        return true;
+    else
+        return false;
 }
 
 bool isSeparator(int pos, char chr){

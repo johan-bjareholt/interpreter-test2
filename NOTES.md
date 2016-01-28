@@ -11,7 +11,6 @@
 
 ### ToDo:
 - Implement float to lex
-- Implement string to lex
 - Implement scopes in lex in a recursive manner
 
 
@@ -32,23 +31,6 @@
 
 #### TokenTypes
 
-Symbol
-- function
-- variable
+Still in prototype stages, will likely change.
 
-Arithmetic
-- plus (+)
-- minus (-)
-- multiplication (\*)
-- division (/)
-- modulo (%)
-- equals (==)
-- increase (+=)
-- lower (-=)
-- mutiply(\*=)
-- power (\*\*)
-
-Raw 32-bit types
-- integer
-- float
-
+Just check the source code for now

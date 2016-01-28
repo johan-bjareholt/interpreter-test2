@@ -7,6 +7,7 @@
 
 #include "input.h"
 #include "lexer.h"
+#include "ast_builder.h"
 
 void handleInterrupt();
 void cleanup();
@@ -31,6 +32,7 @@ int main(const int argc, const char* argv[]){
 
     // Interpret
     char* line;
+    struct Token* last_token;
 
     bool done = false;
     while (done == false)
@@ -38,7 +40,9 @@ int main(const int argc, const char* argv[]){
         line = input_getline();
         if (line != NULL){
             printf("%s", line);
-            lex(line);
+            last_token = lex(line);
+            if (last_token != NULL)
+                build_ast(last_token, -1);
             input_consume_line();
         }
         else {

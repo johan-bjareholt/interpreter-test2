@@ -10,8 +10,8 @@ struct Token {
     int linenr;
     int posnr;
     // Metadata
-    int tokencategory;
-    int tokentype;
+    int category;
+    int type;
     // Data
     char* content;
     // Prev/Next
@@ -19,18 +19,41 @@ struct Token {
     struct Token* next;
 };
 
-struct Token* create_token();
+struct Token* create_token(int tokencategory, char* content);
+
+enum TokenCategories {
+    TC_SYMBOL,
+    TC_INT,
+    TC_FLOAT,
+    TC_STRING,
+    TC_ARITHMETIC,
+    TC_SCOPE,
+    TC_SEPARATOR,
+    TC_SPACING,
+    TC_TERMINATOR,
+};
+
+extern const char* TokenCategoryNames[];
 
 enum TokenTypes {
-    TT_SYMBOL,
+    // Object
+    TT_OBJECT,
+    // Function
+    TT_FUNCTION,
+    // Raw types
     TT_INT,
     TT_FLOAT,
-    TT_STRING,
-    TT_ARITHMETIC,
-    TT_SCOPE,
-    TT_SEPARATOR,
-    TT_SPACING,
-    TT_TERMINATOR,
+    // Arithmetic
+    TT_PLUS,
+    TT_MINUS,
+    TT_MULTIPLICATION,
+    TT_DIVISION,
+    TT_MODULO,
+    TT_EQUALS,
+    TT_INCREASE,
+    TT_DECREASE,
+    TT_MULTIPLY,
+    TT_POWER,
 };
 
 extern const char* TokenTypeNames[];
