@@ -54,6 +54,13 @@ enum TokenTypes {
     TT_DECREASE,
     TT_MULTIPLY,
     TT_POWER,
+    // Scopes
+    TT_BRACES_OPEN,
+    TT_BRACES_CLOSE,
+    TT_BRACKETS_OPEN,
+    TT_BRACKETS_CLOSE,
+    TT_PARANTHESIS_OPEN,
+    TT_PARANTHESIS_CLOSE,
 };
 
 extern const char* TokenTypeNames[];

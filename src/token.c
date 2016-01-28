@@ -45,7 +45,16 @@ struct Token* create_token(int tokencategory, char* tokenstr){
             }
             break;
         case TC_SCOPE:
-            goto TOKENCATEGORY_NOT_IMPLEMENTED;
+            {
+                switch (token->content[0]){
+                    case '{': token->type = TT_BRACES_OPEN; break;
+                    case '}': token->type = TT_BRACES_CLOSE; break;
+                    case '[': token->type = TT_BRACKETS_OPEN; break;
+                    case ']': token->type = TT_BRACKETS_CLOSE; break;
+                    case '(': token->type = TT_PARANTHESIS_OPEN; break;
+                    case ')': token->type = TT_PARANTHESIS_CLOSE; break;
+                }
+            }
             break;
         case TC_SEPARATOR:
             goto TOKENCATEGORY_NOT_IMPLEMENTED;
@@ -96,6 +105,13 @@ const char* TokenTypeNames[] = {
     "TT_DECREASE",
     "TT_MULTIPLY",
     "TT_POWER",
+    // Scopes
+    "TT_BRACES_OPEN",
+    "TT_BRACES_CLOSE",
+    "TT_BRACKETS_OPEN",
+    "TT_BRACKETS_CLOSE",
+    "TT_PARANTHESIS_OPEN",
+    "TT_PARANTHESIS_CLOSE",
 };
 
 void tat_reset(struct TokenAllowedTable* tat){
