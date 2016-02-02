@@ -14,6 +14,7 @@ struct Token {
     int type;
     // Data
     char* content;
+    struct Token* subtoken_fist;
     // Prev/Next
     struct Token* prev;
     struct Token* next;

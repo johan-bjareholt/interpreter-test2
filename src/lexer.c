@@ -77,7 +77,7 @@ struct Token* lex(char* line){
                 strncpy(tokenstr, line+tokenstart, pos);
                 // Debug text
                 printf("+%i:%s\n", pos, tokenstr);
-                printf("%s\n", TokenCategoryNames[type]);
+                //printf("%s\n", TokenCategoryNames[type]);
                 // Create token
                 struct Token* token = create_token(type, tokenstr);
                 token->srcname = NULL;
