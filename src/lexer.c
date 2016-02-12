@@ -80,17 +80,19 @@ struct Token* lex(char* line){
                 //printf("%s\n", TokenCategoryNames[type]);
                 // Create token
                 struct Token* token = create_token(type, tokenstr);
-                token->srcname = NULL;
-                token->linenr = input_line_nr();
-                token->posnr = tokenstart;
+                if (token != NULL){
+                    token->srcname = NULL;
+                    token->linenr = input_line_nr();
+                    token->posnr = tokenstart;
 
-                if (last_token == NULL){
-                    last_token = token;
-                }
-                else {
-                    last_token->next = token;
-                    token->prev = last_token;
-                    last_token = token;
+                    if (last_token == NULL){
+                        last_token = token;
+                    }
+                    else {
+                        last_token->next = token;
+                        token->prev = last_token;
+                        last_token = token;
+                    }
                 }
             }
             tokenstart = i;

@@ -3,8 +3,15 @@
 #include <string.h>
 
 #include "ast_builder.h"
+#include "tokentable.h"
+
+struct TokenTable* tokentable = NULL;
 
 void build_ast(struct Token* token, int type_end){
+    // Just a single global tokentable for now
+    if (tokentable == NULL)
+        tokentable = malloc(sizeof(struct TokenTable));
+
     while (token != NULL){
         // Prepare for next token
         switch (token->category){

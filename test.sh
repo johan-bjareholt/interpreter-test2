@@ -14,6 +14,8 @@ function test {
 	fi
 }
 
+test tests/arithmetic.src
+
 printf "%d/%d tests passed\n" $testpass $testcount
 if [ $testpass -eq $testcount ] ; then
 	printf "All tests passed!\n"
